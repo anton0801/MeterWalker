@@ -101,6 +101,110 @@ final class PhotoStore {
     }
 }
 
+@MainActor
+final class Walker {
+
+    private(set) var gauge: Gauge
+
+    private let book: Logbook
+    let chime: Chime
+
+    private var paced = false
+
+    init(depot: Depot) {
+        book = depot.book
+        survey = depot.survey
+        meter = depot.meter
+        chime = depot.chime
+        gauge = depot.book.load()
+        paced = true
+    }
+    
+    private let survey: Survey
+    private let meter: Meter
+    
+    func pendingPush() -> String? {
+        let value = UserDefaults.standard.string(forKey: Dials.pushURL) ?? ""
+        return value.isEmpty ? nil : value
+    }
+
+    func commit(_ mutation: Mutation) {
+        gauge = reduce(gauge, mutation)
+        book.save(gauge)
+    }
+
+    private func reduce(_ state: Gauge, _ mutation: Mutation) -> Gauge {
+        var next = state
+        switch mutation {
+        case .readings(let pour):
+            for (key, value) in pour { next.readings[key] = value }
+        case .strides(let pour):
+            for (key, value) in pour where next.strides[key] == nil { next.strides[key] = value }
+        case .swept:
+            next.paced = true
+        case .reseed(let pour):
+            var pooled = pour
+            for (key, value) in next.strides where pooled[key] == nil { pooled[key] = value }
+            next.readings = pooled
+        case .route(let url):
+            next.routeURL = url
+            next.routeMode = "Active"
+            next.fresh = false
+            next.clocked = true
+        case .consent(let granted, let date):
+            next.consentStamped = granted
+            next.consentHalted = !granted
+            next.consentPacedAt = date
+        case .stamp(let date):
+            next.consentPacedAt = date
+        }
+        return next
+    }
+
+    func ensurePaced() {
+        guard !paced else { return }
+        gauge = book.load()
+        paced = true
+    }
+
+    var hasData: Bool { gauge.hasData }
+
+    func moor(_ url: String) {
+        commit(.route(url))
+        book.brand(url)
+        book.prime()
+        UserDefaults.standard.removeObject(forKey: Dials.pushURL)
+    }
+
+    func savedRoute() -> String? {
+        if let mirror = UserDefaults.standard.string(forKey: Dials.route), mirror.isEmpty == false { return mirror }
+        if let held = gauge.routeURL, held.isEmpty == false { return held }
+        return nil
+    }
+
+    func pin(_ url: String) {
+        UserDefaults.standard.set(url, forKey: Dials.route)
+    }
+    
+    func walk() async -> Verdict? {
+        if let push = pendingPush() { return .bearing(push) }
+        guard gauge.hasData else { return nil }
+
+        if gauge.needsPace {
+            commit(.swept)
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
+            if gauge.clocked == false {
+                let fresh = await survey.fetch()
+                if fresh.isEmpty == false { commit(.reseed(fresh)) }
+            }
+        }
+
+        return await meter.deliver(gauge.readings)
+    }
+    
+}
+
+
 extension UIImage {
     /// The image redrawn upright, so pixel coordinates match what is on screen.
     func normalizedUp() -> UIImage {

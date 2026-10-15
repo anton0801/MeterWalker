@@ -13,7 +13,7 @@ struct AppliancesView: View {
     @State private var editing: Appliance?
     @State private var adding = false
 
-    private var unitRate: (rate: Double, tariff: Tariff)? {
+    private var unitRate: (rate: Double, tariff: TariffItem)? {
         guard let tariff = store.state.currentTariff(for: .electricity) else { return nil }
         switch tariff.structure {
         case .flat: return (tariff.unitRate, tariff)

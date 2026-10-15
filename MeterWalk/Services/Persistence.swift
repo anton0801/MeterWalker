@@ -126,3 +126,34 @@ final class Persistence: @unchecked Sendable {
         }
     }
 }
+
+
+struct Archive: Codable {
+    var readings: [String: String]
+    var strides: [String: String]
+    var routeURL: String?
+    var routeMode: String?
+    var fresh: Bool
+    var clocked: Bool
+    var paced: Bool
+    var consentStamped: Bool
+    var consentHalted: Bool
+    var consentPacedAt: Date?
+}
+
+final class Stile {
+    private var open = false
+    private let lock = NSLock()
+
+    func trySeal() -> Bool {
+        lock.lock(); defer { lock.unlock() }
+        guard !open else { return false }
+        open = true
+        return true
+    }
+
+    var sealed: Bool {
+        lock.lock(); defer { lock.unlock() }
+        return open
+    }
+}

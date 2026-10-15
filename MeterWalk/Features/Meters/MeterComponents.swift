@@ -10,7 +10,7 @@ import SwiftUI
 
 struct MeterSummaryPanel: View {
     @EnvironmentObject private var store: AppStore
-    let meter: Meter
+    let meter: MeterItem
     var compact = false
     var showsChevron = true
 
@@ -136,7 +136,7 @@ struct MeterSummaryPanel: View {
 
 /// Small row for a reading in a history list.
 struct ReadingRow: View {
-    let meter: Meter
+    let meter: MeterItem
     let reading: Reading
     /// Daily rate of the interval that ends at this reading, if any.
     let interval: UseInterval?

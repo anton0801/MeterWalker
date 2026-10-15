@@ -50,7 +50,7 @@ struct BillRow: View {
     @EnvironmentObject private var store: AppStore
     let bill: Bill
 
-    private var meter: Meter? { store.state.meter(bill.meterID) }
+    private var meter: MeterItem? { store.state.meter(bill.meterID) }
 
     private var result: BillCheckResult {
         BillCheckEngine.check(

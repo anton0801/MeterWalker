@@ -59,7 +59,7 @@ struct CostLine: Identifiable, Equatable {
 
 struct TariffCost: Identifiable, Equatable {
     var id: UUID { tariff.id }
-    let tariff: Tariff
+    let tariff: TariffItem
     let standing: Double
     let energyLines: [CostLine]
     /// Exit fee of the current tariff, paid to switch to this one.
@@ -114,12 +114,12 @@ struct ReplayResult: Equatable {
 enum TariffEngine {
     static let nightShareMissing = "Set the share of your use at night to price this tariff."
 
-    static func replay(meter: Meter, readings: [Reading], tariffs: [Tariff], from: Date, to: Date) -> ReplayResult {
+    static func replay(meter: MeterItem, readings: [Reading], tariffs: [TariffItem], from: Date, to: Date) -> ReplayResult {
         let series = ConsumptionEngine.dailySeries(meter: meter, readings: readings)
         return replay(meter: meter, series: series, tariffs: tariffs, from: from, to: to)
     }
 
-    static func replay(meter: Meter, series: [Date: DayUse], tariffs: [Tariff], from: Date, to: Date) -> ReplayResult {
+    static func replay(meter: MeterItem, series: [Date: DayUse], tariffs: [TariffItem], from: Date, to: Date) -> ReplayResult {
         let days = series.values.filter { $0.day >= from && $0.day < to }
         let totalUse = days.reduce(0) { $0 + $1.total }
         let dayUse = meter.kind.isTwoRate ? days.reduce(0) { $0 + $1.use(.day) } : nil
@@ -154,8 +154,8 @@ enum TariffEngine {
     }
 
     static func cost(
-        of tariff: Tariff,
-        meter: Meter,
+        of tariff: TariffItem,
+        meter: MeterItem,
         days: [DayUse],
         dayUse: Double?,
         nightUse: Double?,
@@ -309,7 +309,7 @@ enum ReplayNarrative {
     static let proratedNote = "Tier thresholds are scaled down for months your readings only partly cover."
 }
 
-extension Tariff {
+extension TariffItem {
     var displayName: String {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? "\(structure.title) tariff" : trimmed

@@ -102,7 +102,7 @@ final class AppStore: ObservableObject {
 
     // MARK: Onboarding
 
-    func addMeters(_ meters: [Meter]) {
+    func addMeters(_ meters: [MeterItem]) {
         mutate { $0.meters.append(contentsOf: meters) }
     }
 
@@ -112,7 +112,7 @@ final class AppStore: ObservableObject {
 
     // MARK: Meters
 
-    func saveMeter(_ meter: Meter) {
+    func saveMeter(_ meter: MeterItem) {
         mutate { state in
             if let index = state.meters.firstIndex(where: { $0.id == meter.id }) {
                 state.meters[index] = meter
@@ -203,7 +203,7 @@ final class AppStore: ObservableObject {
 
     // MARK: Tariffs
 
-    func saveTariff(_ tariff: Tariff) {
+    func saveTariff(_ tariff: TariffItem) {
         mutate { state in
             if tariff.isCurrent {
                 for index in state.tariffs.indices where state.tariffs[index].meterType == tariff.meterType {

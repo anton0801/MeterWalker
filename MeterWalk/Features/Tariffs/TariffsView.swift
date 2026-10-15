@@ -109,7 +109,7 @@ struct TariffsView: View {
 
 struct TariffRow: View {
     @EnvironmentObject private var store: AppStore
-    let tariff: Tariff
+    let tariff: TariffItem
 
     var body: some View {
         Panel(padding: 14) {
@@ -148,7 +148,7 @@ struct TariffRow: View {
 }
 
 enum TariffSummary {
-    static func rates(_ tariff: Tariff, money: MoneyText) -> String {
+    static func rates(_ tariff: TariffItem, money: MoneyText) -> String {
         let unit = tariff.meterType.unit
         var parts: [String] = []
         switch tariff.structure {

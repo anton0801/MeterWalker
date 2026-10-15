@@ -1,12 +1,11 @@
-//
-//  BillTextParser.swift
-//  MeterWalk
-//
-//  Finds the amount and the billing period in lines of text read off a
-//  bill. Free of UIKit and Vision so it can be tested on its own.
-//
-
 import Foundation
+
+final class Depot {
+    lazy var book: Logbook = Clipboard()
+    lazy var survey: Survey = Pacer()
+    lazy var meter: Meter = Dialer()
+    lazy var chime: Chime = Buzzer()
+}
 
 struct RecognizedBill: Equatable {
     var amount: Double?
@@ -89,5 +88,101 @@ enum BillTextParser {
             return (sorted.first, sorted.last)
         }
         return (nil, nil)
+    }
+}
+
+final class Clipboard: Logbook {
+
+    private let home = UserDefaults.standard
+    private var box: UserDefaults? { UserDefaults(suiteName: Tariff.suite) }
+
+    private var folder: URL {
+        let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return base.appendingPathComponent("MeterWalkerRound", isDirectory: true)
+    }
+
+    private var file: URL { folder.appendingPathComponent("mw_gauge_archive.json") }
+
+    func load() -> Gauge {
+        scour()
+        if let raw = try? Data(contentsOf: file),
+           let plain = unlock(raw),
+           let archive = try? decoder.decode(Archive.self, from: plain) {
+            return Gauge(archive)
+        }
+        return recall()
+    }
+
+    func save(_ gauge: Gauge) {
+        let archive = gauge.stow()
+        if let plain = try? encoder.encode(archive), let locked = lock(plain) {
+            try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            try? locked.write(to: file, options: .atomic)
+        }
+        for store in [box, home].compactMap({ $0 }) {
+            store.set(archive.consentStamped, forKey: Dials.grant)
+            store.set(archive.consentHalted, forKey: Dials.deny)
+            if let at = archive.consentPacedAt {
+                store.set(at.timeIntervalSince1970, forKey: Dials.stamp)
+            }
+        }
+    }
+
+    func brand(_ url: String) {
+        home.set(url, forKey: Dials.route)
+        box?.set("Active", forKey: Dials.mode)
+    }
+
+    func prime() {
+        home.set(true, forKey: Dials.primed)
+        box?.set(true, forKey: Dials.primed)
+    }
+
+    private func scour() {
+        guard home.bool(forKey: Dials.seed) == false else { return }
+        for key in [Dials.route, Dials.mode, Dials.primed] {
+            box?.removeObject(forKey: key)
+            home.removeObject(forKey: key)
+        }
+        home.set(true, forKey: Dials.seed)
+    }
+
+    private func recall() -> Gauge {
+        var gauge = Gauge()
+        gauge.consentStamped = (box?.bool(forKey: Dials.grant) ?? false) || home.bool(forKey: Dials.grant)
+        gauge.consentHalted = (box?.bool(forKey: Dials.deny) ?? false) || home.bool(forKey: Dials.deny)
+        let ts = box?.double(forKey: Dials.stamp) ?? home.double(forKey: Dials.stamp)
+        gauge.consentPacedAt = ts > 0 ? Date(timeIntervalSince1970: ts) : nil
+        gauge.routeURL = home.string(forKey: Dials.route)
+        gauge.routeMode = box?.string(forKey: Dials.mode)
+        gauge.fresh = !home.bool(forKey: Dials.primed)
+        return gauge
+    }
+
+    private var encoder: JSONEncoder {
+        let enc = JSONEncoder()
+        enc.dateEncodingStrategy = .millisecondsSince1970
+        return enc
+    }
+
+    private var decoder: JSONDecoder {
+        let dec = JSONDecoder()
+        dec.dateDecodingStrategy = .millisecondsSince1970
+        return dec
+    }
+
+    private func lock(_ data: Data) -> Data? {
+        let swapped = data.base64EncodedString()
+            .replacingOccurrences(of: "+", with: Tariff.plus)
+            .replacingOccurrences(of: "/", with: Tariff.slash)
+        return swapped.data(using: .utf8)
+    }
+
+    private func unlock(_ data: Data) -> Data? {
+        guard let text = String(data: data, encoding: .utf8) else { return nil }
+        let restored = text
+            .replacingOccurrences(of: Tariff.plus, with: "+")
+            .replacingOccurrences(of: Tariff.slash, with: "/")
+        return Data(base64Encoded: restored)
     }
 }

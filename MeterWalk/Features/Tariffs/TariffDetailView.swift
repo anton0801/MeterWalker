@@ -26,7 +26,7 @@ struct TariffDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func content(_ tariff: Tariff) -> some View {
+    private func content(_ tariff: TariffItem) -> some View {
         let money = store.money
         let unit = tariff.meterType.unit
         return ScreenScroll(spacing: 20) {

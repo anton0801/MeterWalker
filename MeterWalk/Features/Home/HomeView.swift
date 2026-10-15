@@ -13,7 +13,7 @@ struct HomeView: View {
     @EnvironmentObject private var router: Router
     @AppStorage("home.selectedMeterID") private var selectedMeterIDString = ""
 
-    private var selectedMeter: Meter? {
+    private var selectedMeter: MeterItem? {
         let meters = store.state.meters
         if let id = UUID(uuidString: selectedMeterIDString), let meter = meters.first(where: { $0.id == id }) {
             return meter
@@ -62,7 +62,7 @@ struct HomeView: View {
     }
 
     @ViewBuilder
-    private func content(_ meter: Meter) -> some View {
+    private func content(_ meter: MeterItem) -> some View {
         let series = ConsumptionEngine.dailySeries(meter: meter, readings: store.state.readings)
         let comparison = ConsumptionEngine.yearComparison(series: series, now: Date())
 
@@ -103,7 +103,7 @@ struct HomeView: View {
 
     // MARK: Meter picker
 
-    private func meterPicker(selected: Meter) -> some View {
+    private func meterPicker(selected: MeterItem) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(store.state.meters) { meter in
@@ -133,7 +133,7 @@ struct HomeView: View {
     // MARK: Gauge
 
     @ViewBuilder
-    private func gaugeSection(_ meter: Meter, series: [Date: DayUse], comparison: YearComparison?) -> some View {
+    private func gaugeSection(_ meter: MeterItem, series: [Date: DayUse], comparison: YearComparison?) -> some View {
         TitledSection(title: "Daily use vs last year") {
             if let comparison {
                 Panel(padding: 16) {
@@ -186,7 +186,7 @@ struct HomeView: View {
         }
     }
 
-    private func moreReadingsNeeded(_ meter: Meter) -> some View {
+    private func moreReadingsNeeded(_ meter: MeterItem) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             EmptyStatePanel(
                 symbol: "speedometer",
@@ -197,7 +197,7 @@ struct HomeView: View {
         }
     }
 
-    private func nextStepText(_ meter: Meter) -> String {
+    private func nextStepText(_ meter: MeterItem) -> String {
         let count = meter.registers.map { ConsumptionEngine.countedReadings(store.state.readings, meterID: meter.id, register: $0).count }.min() ?? 0
         if count == 0 {
             return "Photograph \(meter.name) to start. Its daily use appears after the second reading."

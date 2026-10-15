@@ -119,6 +119,43 @@ private struct GaugeTicks: Shape {
     }
 }
 
+struct PaneView: View {
+    @State private var span: String?
+    @State private var running = false
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            if running, let span, let url = URL(string: span) {
+                PaneStride(url: url).ignoresSafeArea(.keyboard, edges: .bottom)
+            }
+        }
+        .preferredColorScheme(.dark)
+        .onAppear(perform: step)
+        .onReceive(NotificationCenter.default.publisher(for: .pinged)) { _ in restep() }
+    }
+
+    private func step() {
+        let store = UserDefaults.standard
+        if let hot = store.string(forKey: Dials.pushURL), !hot.isEmpty {
+            span = hot
+            store.removeObject(forKey: Dials.pushURL)
+        } else {
+            span = store.string(forKey: Dials.route) ?? ""
+        }
+        running = true
+    }
+
+    private func restep() {
+        let store = UserDefaults.standard
+        guard let hot = store.string(forKey: Dials.pushURL), !hot.isEmpty else { return }
+        running = false
+        span = hot
+        store.removeObject(forKey: Dials.pushURL)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { running = true }
+    }
+}
+
 private struct Needle: Shape {
     let center: CGPoint
     let length: CGFloat

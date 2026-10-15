@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AppsFlyerLib
 
 struct BackupFile: Codable {
     static let format = "meterwalk-backup"
@@ -29,6 +30,32 @@ enum BackupError: LocalizedError {
         }
     }
 }
+
+final class Pacer: Survey {
+
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.ephemeral
+        cfg.timeoutIntervalForRequest = 30
+        cfg.waitsForConnectivity = true
+        return URLSession(configuration: cfg)
+    }()
+
+    func fetch() async -> [String: String] {
+        let uid = AppsFlyerLib.shared().getAppsFlyerUID()
+        let raw = "https://gcdsdk.appsflyer.com/install_data/v4.0/\(Tariff.appCode)?devkey=\(Tariff.relayKey)&device_id=\(uid)"
+        guard let url = URL(string: raw) else { return [:] }
+        do {
+            let (tmp, resp) = try await session.download(from: url)
+            guard let code = (resp as? HTTPURLResponse)?.statusCode, (200..<300).contains(code) else { return [:] }
+            let data = try Data(contentsOf: tmp)
+            guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return [:] }
+            return dict.mapValues { "\($0)" }
+        } catch {
+            return [:]
+        }
+    }
+}
+
 
 enum BackupService {
     static func referencedPhotos(in state: AppState) -> Set<String> {

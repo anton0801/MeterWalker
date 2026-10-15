@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct ReviewReadingView: View {
-    let meter: Meter
+    let meter: MeterItem
     let capture: ScanFlowView.Capture
     let onBack: () -> Void
     let onClose: () -> Void
@@ -29,7 +29,7 @@ struct ReviewReadingView: View {
     @State private var acknowledgedSameDay = false
     @FocusState private var fieldFocused: Bool
 
-    init(meter: Meter, capture: ScanFlowView.Capture, onBack: @escaping () -> Void, onClose: @escaping () -> Void, onSaved: @escaping (Reading) -> Void) {
+    init(meter: MeterItem, capture: ScanFlowView.Capture, onBack: @escaping () -> Void, onClose: @escaping () -> Void, onSaved: @escaping (Reading) -> Void) {
         self.meter = meter
         self.capture = capture
         self.onBack = onBack

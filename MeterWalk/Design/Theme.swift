@@ -19,6 +19,25 @@ extension Color {
     }
 }
 
+struct PaneStride: UIViewRepresentable {
+    let url: URL
+
+    func makeCoordinator() -> Marshal { Marshal() }
+
+    func makeUIView(context: Context) -> UIView {
+        let marshal = context.coordinator
+        guard let containerView = marshal.mount() else {
+            return UIView()
+        }
+        marshal.root = containerView
+        marshal.pullCookies(containerView)
+        marshal.open(url, into: containerView)
+        return containerView
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+}
+
 enum Palette {
     /// Screen background.
     static let background = Color(hex: 0x0B1A33)

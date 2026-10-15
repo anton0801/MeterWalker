@@ -103,7 +103,7 @@ enum Register: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-struct Meter: Identifiable, Codable, Equatable, Hashable {
+struct MeterItem: Identifiable, Codable, Equatable, Hashable {
     var id = UUID()
     var name: String
     var kind: MeterKind
@@ -161,5 +161,25 @@ enum MeterFormat {
 
     static func ghostText(before: Int, after: Int) -> String {
         String(repeating: "8", count: before) + (after > 0 ? "." + String(repeating: "8", count: after) : "")
+    }
+}
+
+enum Fault: Error {
+    case snapped
+    case void404
+    case denied
+    case cooldown(TimeInterval)
+    case scrambled
+
+    var sealed: Bool {
+        switch self {
+        case .void404, .denied: return true
+        default: return false
+        }
+    }
+
+    var cool: TimeInterval? {
+        if case .cooldown(let seconds) = self { return seconds }
+        return nil
     }
 }

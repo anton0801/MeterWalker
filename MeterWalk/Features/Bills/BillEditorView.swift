@@ -45,7 +45,7 @@ struct BillEditorView: View {
         _readingText = State(initialValue: texts.mapValues { (opening: $0.0, closing: $0.1) })
     }
 
-    private var meter: Meter? { store.state.meter(draft.meterID) }
+    private var meter: MeterItem? { store.state.meter(draft.meterID) }
     private var registers: [Register] { meter?.registers ?? [.total] }
 
     private func binding(_ register: Register, opening: Bool) -> Binding<String> {
@@ -256,7 +256,7 @@ struct BillEditorView: View {
         )
     }
 
-    private func meterOption(_ meter: Meter) -> some View {
+    private func meterOption(_ meter: MeterItem) -> some View {
         let selected = draft.meterID == meter.id
         return Button {
             draft.meterID = selected ? nil : meter.id

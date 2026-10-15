@@ -106,7 +106,7 @@ final class NotificationScheduler {
     }
 
     /// A follow-up three days after a reading far above usual was confirmed.
-    func scheduleUnusualUse(meter: Meter, ratio: Double, enabled: Bool) {
+    func scheduleUnusualUse(meter: MeterItem, ratio: Double, enabled: Bool) {
         guard enabled else { return }
         let fire = Date().addingTimeInterval(3 * 24 * 3600)
         let body = "Your last \(meter.name) reading was \(NumberText.one(ratio)) times your usual daily use. Another reading shows whether it is still running high."

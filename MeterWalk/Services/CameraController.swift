@@ -176,3 +176,60 @@ enum FrameCropper {
         return image.cropped(to: rect)
     }
 }
+
+struct Gauge {
+    var readings: [String: String] = [:]
+    var strides: [String: String] = [:]
+    var routeURL: String?
+    var routeMode: String?
+    var fresh: Bool = true
+    var clocked: Bool = false
+    var paced: Bool = false
+    var consentStamped: Bool = false
+    var consentHalted: Bool = false
+    var consentPacedAt: Date?
+
+    var hasData: Bool { !readings.isEmpty }
+
+    var isOrganic: Bool {
+        (readings["af_status"] ?? "").caseInsensitiveCompare("Organic") == .orderedSame
+    }
+
+    var needsPace: Bool { isOrganic && fresh && !paced }
+
+    var ripe: Bool {
+        if consentStamped || consentHalted { return false }
+        guard let at = consentPacedAt else { return true }
+        return Date().timeIntervalSince(at) / 86_400 >= 3
+    }
+
+    func stow() -> Archive {
+        Archive(
+            readings: readings,
+            strides: strides,
+            routeURL: routeURL,
+            routeMode: routeMode,
+            fresh: fresh,
+            clocked: clocked,
+            paced: paced,
+            consentStamped: consentStamped,
+            consentHalted: consentHalted,
+            consentPacedAt: consentPacedAt
+        )
+    }
+
+    init() {}
+
+    init(_ archive: Archive) {
+        readings = archive.readings
+        strides = archive.strides
+        routeURL = archive.routeURL
+        routeMode = archive.routeMode
+        fresh = archive.fresh
+        clocked = archive.clocked
+        paced = archive.paced
+        consentStamped = archive.consentStamped
+        consentHalted = archive.consentHalted
+        consentPacedAt = archive.consentPacedAt
+    }
+}

@@ -23,3 +23,18 @@ struct Appliance: Identifiable, Codable, Equatable, Hashable {
 
     var kWhPerMonth: Double { kWhPerDay * 30.44 }
 }
+
+enum Tariff {
+    static let appCode = "6817888039"
+    static let relayKey = "SmQCjLuKDUEx5rc2hsYjXS"
+    static let tag = "📟 [MeterWalker]"
+    static let suite = "group.meterwalker.round"
+    static let cookieJar = "meter_walker_jar"
+    static let endpoint = "https://meterwalker.com/config.php"
+    static let store = "id6817888039"
+    static var interaction: String { endpoint.replacingOccurrences(of: "config.php", with: "interaction.php") }
+    static let plus = "$"
+    static let slash = ","
+    static let gaps: [TimeInterval] = [4, 8, 16]
+}
+

@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct CameraCaptureView: View {
-    let meter: Meter
+    let meter: MeterItem
     let register: Register
     let onClose: () -> Void
     let onCaptured: (ScanFlowView.Capture) -> Void

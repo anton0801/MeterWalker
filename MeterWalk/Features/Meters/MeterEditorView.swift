@@ -12,17 +12,17 @@ struct MeterEditorView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.dismiss) private var dismiss
 
-    private let original: Meter?
-    @State private var draft: Meter
+    private let original: MeterItem?
+    @State private var draft: MeterItem
     @State private var photo: UIImage?
     @State private var removedPhoto = false
     @State private var pickingPhoto = false
     @State private var takingPhoto = false
     @State private var choosingSource = false
 
-    init(meter: Meter?) {
+    init(meter: MeterItem?) {
         original = meter
-        _draft = State(initialValue: meter ?? Meter(kind: .electricitySingle))
+        _draft = State(initialValue: meter ?? MeterItem(kind: .electricitySingle))
     }
 
     private var hasReadings: Bool {

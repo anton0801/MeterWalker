@@ -1,12 +1,6 @@
-//
-//  BillCheckEngine.swift
-//  MeterWalk
-//
-//  Puts the readings printed on a bill next to the user's own photos of the
-//  meter, worked out for the exact bill dates from the daily rate.
-//
-
 import Foundation
+import UIKit
+import UserNotifications
 
 /// The user's own meter value on a given date and how it was found.
 struct OwnValue: Equatable {
@@ -30,6 +24,17 @@ struct OwnValue: Equatable {
         }
     }
 }
+
+final class Buzzer: Chime {
+    func ring() async -> Bool {
+        let granted = (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])) ?? false
+        if granted {
+            await MainActor.run { UIApplication.shared.registerForRemoteNotifications() }
+        }
+        return granted
+    }
+}
+
 
 struct RegisterCheck: Equatable, Identifiable {
     var id: Register { register }
@@ -92,7 +97,7 @@ struct BillCheckResult: Equatable {
 enum BillCheckEngine {
     static let extrapolationLimitDays = 45
 
-    static func ownValue(at date: Date, meter: Meter, register: Register, readings: [Reading]) -> OwnValue? {
+    static func ownValue(at date: Date, meter: MeterItem, register: Register, readings: [Reading]) -> OwnValue? {
         let target = ConsumptionEngine.day(date)
         let counted = ConsumptionEngine.countedReadings(readings, meterID: meter.id, register: register)
         if let exact = counted.first(where: { ConsumptionEngine.day($0.date) == target }) {
@@ -130,7 +135,7 @@ enum BillCheckEngine {
         return nil
     }
 
-    static func check(bill: Bill, meter: Meter?, readings: [Reading], currentTariff: Tariff?) -> BillCheckResult {
+    static func check(bill: Bill, meter: MeterItem?, readings: [Reading], currentTariff: TariffItem?) -> BillCheckResult {
         guard let meter else {
             return BillCheckResult(status: .noMeter, checks: [], excessUnits: nil, rate: nil, rateSource: nil)
         }
@@ -172,7 +177,7 @@ enum BillCheckEngine {
     }
 
     /// The price used to turn extra units into money, and where it came from.
-    static func unitRate(for checks: [RegisterCheck], meter: Meter, bill: Bill, currentTariff: Tariff?) -> (Double?, String?) {
+    static func unitRate(for checks: [RegisterCheck], meter: MeterItem, bill: Bill, currentTariff: TariffItem?) -> (Double?, String?) {
         if let tariff = currentTariff {
             switch tariff.structure {
             case .flat:

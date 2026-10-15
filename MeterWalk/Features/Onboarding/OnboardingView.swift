@@ -258,7 +258,7 @@ struct OnboardingView: View {
     /// pass through this page.
     private func createMeters() {
         var keep: [UUID] = []
-        var toAdd: [Meter] = []
+        var toAdd: [MeterItem] = []
         let existing = onboardingMeterIDs.compactMap { store.state.meter($0) }
 
         for meter in existing {
@@ -277,7 +277,7 @@ struct OnboardingView: View {
         }
         let existingKinds = Set(existing.filter { keep.contains($0.id) }.map(\.kind))
         for kind in selectedKinds where !existingKinds.contains(kind) {
-            var meter = Meter(kind: kind)
+            var meter = MeterItem(kind: kind)
             let dial = layout(kind).wrappedValue
             meter.digitsBeforeDecimal = dial.before
             meter.digitsAfterDecimal = dial.after
@@ -287,7 +287,7 @@ struct OnboardingView: View {
         onboardingMeterIDs = keep + toAdd.map(\.id)
     }
 
-    private var onboardingMeters: [Meter] {
+    private var onboardingMeters: [MeterItem] {
         onboardingMeterIDs.compactMap { store.state.meter($0) }
     }
 

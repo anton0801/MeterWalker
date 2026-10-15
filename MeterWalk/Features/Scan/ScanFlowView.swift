@@ -112,7 +112,7 @@ struct ScanFlowView: View {
 private struct MeterChooser: View {
     @EnvironmentObject private var store: AppStore
     let onClose: () -> Void
-    let onChoose: (Meter) -> Void
+    let onChoose: (MeterItem) -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -147,7 +147,7 @@ private struct MeterChooser: View {
 
 struct SavedReadingView: View {
     @EnvironmentObject private var store: AppStore
-    let meter: Meter
+    let meter: MeterItem
     let reading: Reading
     let onNextRegister: (Register) -> Void
     let onAnotherMeter: (() -> Void)?

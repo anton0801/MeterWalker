@@ -6,14 +6,65 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8FFBF5CA308107690008F4D6 /* AppsFlyerLib in Frameworks */ = {isa = PBXBuildFile; productRef = 8FFBF5C9308107690008F4D6 /* AppsFlyerLib */; };
+		8FFBF5CD308107900008F4D6 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8FFBF5CC308107900008F4D6 /* FirebaseCore */; };
+		8FFBF5CF308107900008F4D6 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 8FFBF5CE308107900008F4D6 /* FirebaseMessaging */; };
+		8FFBF5DB308107AC0008F4D6 /* NotificationsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8FFBF5D4308107AC0008F4D6 /* NotificationsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8FFBF5E3308107C30008F4D6 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 8FFBF5E2308107C30008F4D6 /* FirebaseMessaging */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8FFBF5D9308107AC0008F4D6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8FBC4C1F3062FB910001809F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FFBF5D3308107AC0008F4D6;
+			remoteInfo = NotificationsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8FFBF5E0308107AC0008F4D6 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8FFBF5DB308107AC0008F4D6 /* NotificationsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		8FBC4C273062FB910001809F /* MeterWalk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeterWalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FFBF5D4308107AC0008F4D6 /* NotificationsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8FFBF5DC308107AC0008F4D6 /* Exceptions for "NotificationsExtension" folder in "NotificationsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8FFBF5D3308107AC0008F4D6 /* NotificationsExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8FBC4C293062FB910001809F /* MeterWalk */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = MeterWalk;
+			sourceTree = "<group>";
+		};
+		8FFBF5D5308107AC0008F4D6 /* NotificationsExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8FFBF5DC308107AC0008F4D6 /* Exceptions for "NotificationsExtension" folder in "NotificationsExtension" target */,
+			);
+			path = NotificationsExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +74,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FFBF5CF308107900008F4D6 /* FirebaseMessaging in Frameworks */,
+				8FFBF5CD308107900008F4D6 /* FirebaseCore in Frameworks */,
+				8FFBF5CA308107690008F4D6 /* AppsFlyerLib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8FFBF5D1308107AC0008F4D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FFBF5E3308107C30008F4D6 /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +95,8 @@
 			isa = PBXGroup;
 			children = (
 				8FBC4C293062FB910001809F /* MeterWalk */,
+				8FFBF5D5308107AC0008F4D6 /* NotificationsExtension */,
+				8FFBF5E1308107C30008F4D6 /* Frameworks */,
 				8FBC4C283062FB910001809F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +105,16 @@
 			isa = PBXGroup;
 			children = (
 				8FBC4C273062FB910001809F /* MeterWalk.app */,
+				8FFBF5D4308107AC0008F4D6 /* NotificationsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8FFBF5E1308107C30008F4D6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -55,20 +127,48 @@
 				8FBC4C233062FB910001809F /* Sources */,
 				8FBC4C243062FB910001809F /* Frameworks */,
 				8FBC4C253062FB910001809F /* Resources */,
+				8FFBF5E0308107AC0008F4D6 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8FFBF5DA308107AC0008F4D6 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8FBC4C293062FB910001809F /* MeterWalk */,
 			);
 			name = MeterWalk;
 			packageProductDependencies = (
+				8FFBF5C9308107690008F4D6 /* AppsFlyerLib */,
+				8FFBF5CC308107900008F4D6 /* FirebaseCore */,
+				8FFBF5CE308107900008F4D6 /* FirebaseMessaging */,
 			);
 			productName = MeterWalk;
 			productReference = 8FBC4C273062FB910001809F /* MeterWalk.app */;
 			productType = "com.apple.product-type.application";
+		};
+		8FFBF5D3308107AC0008F4D6 /* NotificationsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8FFBF5DD308107AC0008F4D6 /* Build configuration list for PBXNativeTarget "NotificationsExtension" */;
+			buildPhases = (
+				8FFBF5D0308107AC0008F4D6 /* Sources */,
+				8FFBF5D1308107AC0008F4D6 /* Frameworks */,
+				8FFBF5D2308107AC0008F4D6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8FFBF5D5308107AC0008F4D6 /* NotificationsExtension */,
+			);
+			name = NotificationsExtension;
+			packageProductDependencies = (
+				8FFBF5E2308107C30008F4D6 /* FirebaseMessaging */,
+			);
+			productName = NotificationsExtension;
+			productReference = 8FFBF5D4308107AC0008F4D6 /* NotificationsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -83,6 +183,9 @@
 					8FBC4C263062FB910001809F = {
 						CreatedOnToolsVersion = 16.4;
 					};
+					8FFBF5D3308107AC0008F4D6 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 				};
 			};
 			buildConfigurationList = 8FBC4C223062FB910001809F /* Build configuration list for PBXProject "MeterWalk" */;
@@ -94,18 +197,30 @@
 			);
 			mainGroup = 8FBC4C1E3062FB910001809F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8FFBF5C8308107690008F4D6 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */,
+				8FFBF5CB308107900008F4D6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8FBC4C283062FB910001809F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				8FBC4C263062FB910001809F /* MeterWalk */,
+				8FFBF5D3308107AC0008F4D6 /* NotificationsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8FBC4C253062FB910001809F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8FFBF5D2308107AC0008F4D6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +237,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8FFBF5D0308107AC0008F4D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8FFBF5DA308107AC0008F4D6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8FFBF5D3308107AC0008F4D6 /* NotificationsExtension */;
+			targetProxy = 8FFBF5D9308107AC0008F4D6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8FBC4C313062FB920001809F /* Debug */ = {
@@ -246,7 +376,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MeterWalk/MeterWalk.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MeterWalk-Info.plist";
@@ -254,6 +384,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Meter Walk uses the camera to photograph your meter and read the numbers on this iPhone. Photos stay on this device as proof of each reading.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Meter Walk may use tracking technologies to understand app usage, measure advertising performance, and improve your experience. Your data will be handled in accordance with our Privacy Policy.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -266,7 +397,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.3;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.12;
 				PRODUCT_BUNDLE_IDENTIFIER = cc.walk.meter.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -287,7 +418,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MeterWalk/MeterWalk.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "MeterWalk-Info.plist";
@@ -295,6 +426,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Meter Walk uses the camera to photograph your meter and read the numbers on this iPhone. Photos stay on this device as proof of each reading.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Meter Walk may use tracking technologies to understand app usage, measure advertising performance, and improve your experience. Your data will be handled in accordance with our Privacy Policy.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -307,7 +439,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.3;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.12;
 				PRODUCT_BUNDLE_IDENTIFIER = cc.walk.meter.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -318,6 +450,67 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.5;
+			};
+			name = Release;
+		};
+		8FFBF5DE308107AC0008F4D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationsExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationsExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.walk.meter.app.NotificationsExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8FFBF5DF308107AC0008F4D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationsExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationsExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.walk.meter.app.NotificationsExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -342,7 +535,58 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		8FFBF5DD308107AC0008F4D6 /* Build configuration list for PBXNativeTarget "NotificationsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FFBF5DE308107AC0008F4D6 /* Debug */,
+				8FFBF5DF308107AC0008F4D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8FFBF5C8308107690008F4D6 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.18.1;
+			};
+		};
+		8FFBF5CB308107900008F4D6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.19.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8FFBF5C9308107690008F4D6 /* AppsFlyerLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8FFBF5C8308107690008F4D6 /* XCRemoteSwiftPackageReference "AppsFlyerFramework" */;
+			productName = AppsFlyerLib;
+		};
+		8FFBF5CC308107900008F4D6 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8FFBF5CB308107900008F4D6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		8FFBF5CE308107900008F4D6 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8FFBF5CB308107900008F4D6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		8FFBF5E2308107C30008F4D6 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8FFBF5CB308107900008F4D6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8FBC4C1F3062FB910001809F /* Project object */;
 }

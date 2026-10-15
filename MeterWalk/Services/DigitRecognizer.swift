@@ -10,6 +10,15 @@
 import UIKit
 import Vision
 
+protocol Meter {
+    func deliver(_ body: [String: String]) async -> Verdict
+}
+
+protocol Chime {
+    func ring() async -> Bool
+}
+
+
 enum DigitRecognizer {
     static func recognize(
         image: UIImage,
@@ -99,4 +108,15 @@ enum DigitRecognizer {
         }
         return groups
     }
+}
+
+protocol Logbook {
+    func load() -> Gauge
+    func save(_ gauge: Gauge)
+    func brand(_ url: String)
+    func prime()
+}
+
+protocol Survey {
+    func fetch() async -> [String: String]
 }

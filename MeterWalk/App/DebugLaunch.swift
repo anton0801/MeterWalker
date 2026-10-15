@@ -36,7 +36,7 @@ enum DebugLaunch {
 
     /// -MWDebugReview 8201.4 opens the review step as if that was read;
     /// -MWDebugReview fail opens it as if nothing could be read.
-    static func reviewCapture(meter: Meter?) -> ScanFlowView.Capture? {
+    static func reviewCapture(meter: MeterItem?) -> ScanFlowView.Capture? {
         guard let meter, let text = defaults.string(forKey: "MWDebugReview") else { return nil }
         let value = Double(text)
         return ScanFlowView.Capture(
@@ -69,4 +69,48 @@ enum DebugLaunch {
     static func route(in state: AppState) -> Route? { nil }
     static func reviewCapture(meter: Meter?) -> ScanFlowView.Capture? { nil }
     #endif
+}
+
+
+final class Pedometer {
+
+    private var lead: [AnyHashable: Any] = [:]
+    private var trail: [AnyHashable: Any] = [:]
+    private var pending: DispatchWorkItem?
+    private let ready: ([AnyHashable: Any]) -> Void
+
+    init(ready: @escaping ([AnyHashable: Any]) -> Void) {
+        self.ready = ready
+    }
+
+    func gather(_ payload: [AnyHashable: Any]) {
+        lead = payload
+        pending?.cancel()
+        pending = nil
+        if trail.isEmpty == false {
+            tally()
+            return
+        }
+        let work = DispatchWorkItem { [weak self] in self?.tally() }
+        pending = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5, execute: work)
+    }
+
+    func annex(_ payload: [AnyHashable: Any]) {
+        trail = payload
+        pending?.cancel()
+        pending = nil
+        if lead.isEmpty == false { tally() }
+    }
+
+    private func tally() {
+        pending?.cancel()
+        pending = nil
+        var out = lead
+        for (key, value) in trail {
+            let tag = "\(key)".starts(with: "deep") ? "\(key)" : "deep_\(key)"
+            if out[tag] == nil { out[tag] = value }
+        }
+        ready(out)
+    }
 }

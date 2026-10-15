@@ -18,12 +18,12 @@ struct TariffReplayView: View {
     @State private var addingTariff = false
     @State private var expanded: UUID?
 
-    private var meter: Meter? {
+    private var meter: MeterItem? {
         store.state.meter(meterID ?? initialMeterID) ?? defaultMeter
     }
 
     /// The first meter with tariffs and use, else the first meter.
-    private var defaultMeter: Meter? {
+    private var defaultMeter: MeterItem? {
         store.state.meters.first { meter in
             !store.state.tariffs(for: meter.kind.tariffType).isEmpty
                 && !ConsumptionEngine.dailySeries(meter: meter, readings: store.state.readings).isEmpty
@@ -49,7 +49,7 @@ struct TariffReplayView: View {
     }
 
     @ViewBuilder
-    private func content(_ meter: Meter) -> some View {
+    private func content(_ meter: MeterItem) -> some View {
         let series = ConsumptionEngine.dailySeries(meter: meter, readings: store.state.readings)
         let tariffs = store.state.tariffs(for: meter.kind.tariffType)
         let range = window.range(now: Date(), series: series)
@@ -91,7 +91,7 @@ struct TariffReplayView: View {
         }
     }
 
-    private func meterPicker(selected: Meter) -> some View {
+    private func meterPicker(selected: MeterItem) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(store.state.meters) { meter in
@@ -115,7 +115,7 @@ struct TariffReplayView: View {
 
     // MARK: Headline
 
-    private func headline(_ result: ReplayResult, meter: Meter) -> some View {
+    private func headline(_ result: ReplayResult, meter: MeterItem) -> some View {
         Panel {
             VStack(alignment: .leading, spacing: 12) {
                 if let current = result.current {
@@ -148,7 +148,7 @@ struct TariffReplayView: View {
     }
 
     @ViewBuilder
-    private func notes(_ result: ReplayResult, meter: Meter) -> some View {
+    private func notes(_ result: ReplayResult, meter: MeterItem) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             if let share = result.usesNightShareAssumption {
                 AssumptionNote(text: ReplayNarrative.assumptionNote(share: share), symbol: "moon.fill", color: Palette.blue)
@@ -173,7 +173,7 @@ struct TariffReplayView: View {
 
     // MARK: Use
 
-    private func useSummary(_ result: ReplayResult, meter: Meter) -> some View {
+    private func useSummary(_ result: ReplayResult, meter: MeterItem) -> some View {
         TitledSection(title: "Use replayed") {
             Panel(padding: 14) {
                 VStack(spacing: 8) {
@@ -191,7 +191,7 @@ struct TariffReplayView: View {
 
     // MARK: Breakdown
 
-    private func breakdown(_ result: ReplayResult, meter: Meter) -> some View {
+    private func breakdown(_ result: ReplayResult, meter: MeterItem) -> some View {
         TitledSection(title: "How each total is made") {
             VStack(spacing: 10) {
                 ForEach(result.costs) { cost in
@@ -339,7 +339,7 @@ struct TariffColumns: View {
 /// share themselves; the app never guesses it.
 struct NightShareControl: View {
     @EnvironmentObject private var store: AppStore
-    let meter: Meter
+    let meter: MeterItem
     @State private var share: Double = 0.3
 
     var body: some View {

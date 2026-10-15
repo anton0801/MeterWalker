@@ -120,7 +120,7 @@ struct BillDetailView: View {
     // MARK: Check
 
     @ViewBuilder
-    private func checkPanel(bill: Bill, meter: Meter?, result: BillCheckResult) -> some View {
+    private func checkPanel(bill: Bill, meter: MeterItem?, result: BillCheckResult) -> some View {
         switch result.status {
         case .noMeter:
             Panel {
@@ -141,7 +141,7 @@ struct BillDetailView: View {
         }
     }
 
-    private func resultPanel(bill: Bill, meter: Meter, result: BillCheckResult) -> some View {
+    private func resultPanel(bill: Bill, meter: MeterItem, result: BillCheckResult) -> some View {
         let color: Color = result.status == .overbilled ? Palette.red : (result.status == .underbilled ? Palette.blue : Palette.ghost)
         return VStack(alignment: .leading, spacing: 14) {
             Text(summary(bill: bill, meter: meter, result: result))
@@ -177,7 +177,7 @@ struct BillDetailView: View {
 
     /// "Estimated on the bill: 04350. Your photo on the same date: 04211.
     /// You were billed for 139 kWh you have not used."
-    private func summary(bill: Bill, meter: Meter, result: BillCheckResult) -> String {
+    private func summary(bill: Bill, meter: MeterItem, result: BillCheckResult) -> String {
         let label: String
         switch bill.readingType {
         case .estimated: label = "Estimated on the bill"
@@ -209,7 +209,7 @@ struct BillDetailView: View {
         return parts.joined(separator: " ")
     }
 
-    private func registerDetail(_ check: RegisterCheck, bill: Bill, meter: Meter) -> some View {
+    private func registerDetail(_ check: RegisterCheck, bill: Bill, meter: MeterItem) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             if check.register != .total {
                 SectionHeader("\(check.register.title) register \(check.register.meterLabel)")
@@ -232,7 +232,7 @@ struct BillDetailView: View {
         .background(RecessedShape())
     }
 
-    private func compareRow(title: String, bill billValue: Double, own: OwnValue?, meter: Meter) -> some View {
+    private func compareRow(title: String, bill billValue: Double, own: OwnValue?, meter: MeterItem) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(TypeScale.captionEmphasis)
@@ -276,7 +276,7 @@ struct BillDetailView: View {
         }
     }
 
-    private func makePack(bill: Bill, meter: Meter, result: BillCheckResult) {
+    private func makePack(bill: Bill, meter: MeterItem, result: BillCheckResult) {
         do {
             let url = try EvidencePackBuilder.build(bill: bill, meter: meter, result: result, photos: store.photos, money: store.money)
             sharing = SharedFile(url: url)

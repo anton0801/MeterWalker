@@ -33,7 +33,7 @@ struct MeterDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func content(_ meter: Meter) -> some View {
+    private func content(_ meter: MeterItem) -> some View {
         let series = ConsumptionEngine.dailySeries(meter: meter, readings: store.state.readings)
         let intervals = ConsumptionEngine.intervals(meter: meter, readings: store.state.readings)
         return ScreenScroll(spacing: 22) {
@@ -122,7 +122,7 @@ struct MeterDetailView: View {
     // MARK: Rate
 
     @ViewBuilder
-    private func rateSection(_ meter: Meter, series: [Date: DayUse], intervals: [Register: [UseInterval]]) -> some View {
+    private func rateSection(_ meter: MeterItem, series: [Date: DayUse], intervals: [Register: [UseInterval]]) -> some View {
         TitledSection(title: "Daily use") {
             if let latest = ConsumptionEngine.latestDailyRate(meter: meter, readings: store.state.readings) {
                 Panel {
@@ -174,7 +174,7 @@ struct MeterDetailView: View {
     // MARK: History
 
     @ViewBuilder
-    private func history(_ meter: Meter, intervals: [Register: [UseInterval]]) -> some View {
+    private func history(_ meter: MeterItem, intervals: [Register: [UseInterval]]) -> some View {
         let register = meter.registers.contains(historyRegister) ? historyRegister : meter.registers[0]
         let readings = store.state.readings(for: meter.id, register: register).sorted { $0.date > $1.date }
         let byEnd = Dictionary((intervals[register] ?? []).map { ($0.endReadingID, $0) }, uniquingKeysWith: { a, _ in a })
@@ -207,7 +207,7 @@ struct MeterDetailView: View {
 
     // MARK: Info
 
-    private func info(_ meter: Meter) -> some View {
+    private func info(_ meter: MeterItem) -> some View {
         TitledSection(title: "About this meter") {
             Panel {
                 VStack(alignment: .leading, spacing: 10) {

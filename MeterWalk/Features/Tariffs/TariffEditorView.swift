@@ -12,8 +12,8 @@ struct TariffEditorView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.dismiss) private var dismiss
 
-    private let original: Tariff?
-    @State private var draft: Tariff
+    private let original: TariffItem?
+    @State private var draft: TariffItem
     @State private var standing: String
     @State private var unitRate: String
     @State private var dayRate: String
@@ -31,9 +31,9 @@ struct TariffEditorView: View {
         var rate: String
     }
 
-    init(tariff: Tariff?, meterType: TariffMeterType? = nil) {
+    init(tariff: TariffItem?, meterType: TariffMeterType? = nil) {
         original = tariff
-        var base = tariff ?? Tariff()
+        var base = tariff ?? TariffItem()
         if tariff == nil, let meterType { base.meterType = meterType }
         _draft = State(initialValue: base)
         _standing = State(initialValue: tariff.map { NumberText.editable($0.standingChargePerDay) } ?? "")

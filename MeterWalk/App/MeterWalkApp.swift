@@ -1,32 +1,17 @@
-//
-//  MeterWalkApp.swift
-//  MeterWalk
-//
-//  Created by Anton Danilov on 22/9/26.
-//
-
 import SwiftUI
 
 @main
 struct MeterWalkApp: App {
     @StateObject private var store = AppStore()
     @Environment(\.scenePhase) private var scenePhase
-
-    init() {
-        Appearance.apply()
-    }
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(store)
                 .preferredColorScheme(.dark)
-                .tint(Palette.yellow)
-        }
-        .onChange(of: scenePhase) { phase in
-            if phase != .active {
-                store.flush()
-            }
         }
     }
 }

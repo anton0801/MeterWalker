@@ -124,7 +124,7 @@ enum ConsumptionEngine {
 
     // MARK: Intervals
 
-    static func intervals(meter: Meter, register: Register, readings: [Reading]) -> [UseInterval] {
+    static func intervals(meter: MeterItem, register: Register, readings: [Reading]) -> [UseInterval] {
         let counted = countedReadings(readings, meterID: meter.id, register: register)
         guard counted.count >= 2 else { return [] }
         var result: [UseInterval] = []
@@ -167,7 +167,7 @@ enum ConsumptionEngine {
         return result
     }
 
-    static func intervals(meter: Meter, readings: [Reading]) -> [Register: [UseInterval]] {
+    static func intervals(meter: MeterItem, readings: [Reading]) -> [Register: [UseInterval]] {
         var result: [Register: [UseInterval]] = [:]
         for register in meter.registers {
             result[register] = intervals(meter: meter, register: register, readings: readings)
@@ -179,7 +179,7 @@ enum ConsumptionEngine {
 
     /// Use per calendar day. A day counts only when every register of the
     /// meter covers it, so a two-rate total is never half a day.
-    static func dailySeries(meter: Meter, readings: [Reading]) -> [Date: DayUse] {
+    static func dailySeries(meter: MeterItem, readings: [Reading]) -> [Date: DayUse] {
         let byRegister = intervals(meter: meter, readings: readings)
         var perRegisterDays: [Register: [Date: (Double, Bool)]] = [:]
         for (register, intervals) in byRegister {
@@ -300,7 +300,7 @@ enum ConsumptionEngine {
     // MARK: Usual rate
 
     /// Median daily rate of the last few intervals before `date`.
-    static func usualDailyRate(meter: Meter, register: Register, readings: [Reading], before date: Date) -> Double? {
+    static func usualDailyRate(meter: MeterItem, register: Register, readings: [Reading], before date: Date) -> Double? {
         let rates = intervals(meter: meter, register: register, readings: readings)
             .filter { $0.endDay <= day(date) }
             .suffix(6)
@@ -312,7 +312,7 @@ enum ConsumptionEngine {
     }
 
     /// Latest interval's daily rate across all registers of a meter.
-    static func latestDailyRate(meter: Meter, readings: [Reading]) -> (rate: Double, since: Date, days: Int, rough: Bool)? {
+    static func latestDailyRate(meter: MeterItem, readings: [Reading]) -> (rate: Double, since: Date, days: Int, rough: Bool)? {
         let byRegister = intervals(meter: meter, readings: readings)
         var total = 0.0
         var since: Date?

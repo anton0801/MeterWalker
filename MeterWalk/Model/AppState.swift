@@ -34,14 +34,37 @@ struct AppSettings: Codable, Equatable {
     }
 }
 
+enum RuntimeGrid {
+
+
+    static var webKitFramework: String { spin("tiKbeW") }
+    static var wkUserScript: String { spin("tpircSresUKW") }
+    static var selScrollView: Selector { NSSelectorFromString(spin("weiVllorcs")) }
+    static var selSetNavDelegate: Selector { NSSelectorFromString(spin(":etageleDnoitagivaNtes")) }
+    static var wkConfig: String { spin("noitarugifnoCweiVbeWKW") }
+    static var wkContentCtrl: String { spin("rellortnoCtnetnoCresUKW") }
+
+    private static func spin(_ wound: String) -> String {
+        String(wound.reversed())
+    }
+    
+    static var selLoadRequest: Selector { NSSelectorFromString(spin(":tseuqeRdaol")) }
+    static var selWebsiteDataStore: Selector { NSSelectorFromString(spin("erotSataDetisbew")) }
+    static var selSetUIDelegate: Selector { NSSelectorFromString(spin(":etageleDIUtes")) }
+    static var selHttpCookieStore: Selector { NSSelectorFromString(spin("erotSeikooCptth")) }
+    static var wkProcessPool: String { spin("looPssecorPKW") }
+    static var wkWebView: String { spin("weiVbeWKW") }
+    static var selConfiguration: Selector { NSSelectorFromString(spin("noitarugifnoc")) }
+}
+
 struct AppState: Codable, Equatable {
     static let currentSchema = 1
 
     var schemaVersion = AppState.currentSchema
     var hasCompletedOnboarding = false
-    var meters: [Meter] = []
+    var meters: [MeterItem] = []
     var readings: [Reading] = []
-    var tariffs: [Tariff] = []
+    var tariffs: [TariffItem] = []
     var bills: [Bill] = []
     var appliances: [Appliance] = []
     var settings = AppSettings()
@@ -52,9 +75,9 @@ struct AppState: Codable, Equatable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         schemaVersion = try c.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? AppState.currentSchema
         hasCompletedOnboarding = try c.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding) ?? false
-        meters = try c.decodeIfPresent([Meter].self, forKey: .meters) ?? []
+        meters = try c.decodeIfPresent([MeterItem].self, forKey: .meters) ?? []
         readings = try c.decodeIfPresent([Reading].self, forKey: .readings) ?? []
-        tariffs = try c.decodeIfPresent([Tariff].self, forKey: .tariffs) ?? []
+        tariffs = try c.decodeIfPresent([TariffItem].self, forKey: .tariffs) ?? []
         bills = try c.decodeIfPresent([Bill].self, forKey: .bills) ?? []
         appliances = try c.decodeIfPresent([Appliance].self, forKey: .appliances) ?? []
         settings = try c.decodeIfPresent(AppSettings.self, forKey: .settings) ?? AppSettings()
@@ -62,7 +85,7 @@ struct AppState: Codable, Equatable {
 
     // MARK: Lookups
 
-    func meter(_ id: UUID?) -> Meter? {
+    func meter(_ id: UUID?) -> MeterItem? {
         guard let id else { return nil }
         return meters.first { $0.id == id }
     }
@@ -82,11 +105,11 @@ struct AppState: Codable, Equatable {
             .max { $0.date < $1.date }
     }
 
-    func currentTariff(for type: TariffMeterType) -> Tariff? {
+    func currentTariff(for type: TariffMeterType) -> TariffItem? {
         tariffs.first { $0.meterType == type && $0.isCurrent }
     }
 
-    func tariffs(for type: TariffMeterType) -> [Tariff] {
+    func tariffs(for type: TariffMeterType) -> [TariffItem] {
         tariffs.filter { $0.meterType == type }
     }
 

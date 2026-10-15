@@ -30,7 +30,7 @@ struct ReadingDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func content(_ reading: Reading, meter: Meter) -> some View {
+    private func content(_ reading: Reading, meter: MeterItem) -> some View {
         let interval = ConsumptionEngine.intervals(meter: meter, register: reading.register, readings: store.state.readings)
             .first { $0.endReadingID == reading.id }
         return ScreenScroll(spacing: 20) {
@@ -119,7 +119,7 @@ struct ReadingDetailView: View {
 struct ReadingEditorView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.dismiss) private var dismiss
-    let meter: Meter
+    let meter: MeterItem
     let reading: Reading
 
     @State private var text: String
@@ -128,7 +128,7 @@ struct ReadingEditorView: View {
     @State private var dropReason: DropReason?
     @State private var confirmUnusual = false
 
-    init(meter: Meter, reading: Reading) {
+    init(meter: MeterItem, reading: Reading) {
         self.meter = meter
         self.reading = reading
         _text = State(initialValue: NumberText.editable(reading.value))

@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import Combine
 
 struct CheapestTariffInsight: Identifiable, Equatable {
     var id: UUID { meter.id }
-    let meter: Meter
+    let meter: MeterItem
     let window: ReplayWindow
     let result: ReplayResult
     let cheapest: TariffCost
@@ -26,27 +27,27 @@ struct CheapestTariffInsight: Identifiable, Equatable {
 struct OverbilledBill: Identifiable, Equatable {
     var id: UUID { bill.id }
     let bill: Bill
-    let meter: Meter
+    let meter: MeterItem
     let result: BillCheckResult
 }
 
 struct CostPerDayInsight: Identifiable, Equatable {
     var id: UUID { meter.id }
-    let meter: Meter
-    let tariff: Tariff
+    let meter: MeterItem
+    let tariff: TariffItem
     let perDay: Double
     let coveredDays: Int
 }
 
 struct ChangeInsight: Identifiable, Equatable {
     var id: UUID { meter.id }
-    let meter: Meter
+    let meter: MeterItem
     let comparison: YearComparison
 }
 
 struct MonthlyInsight: Identifiable, Equatable {
     var id: UUID { meter.id }
-    let meter: Meter
+    let meter: MeterItem
     let months: [ConsumptionEngine.MonthPair]
 }
 
@@ -65,6 +66,124 @@ struct InsightsReport: Equatable {
         overbilled.compactMap { $0.result.excessMoney }.reduce(0, +)
     }
 }
+
+@MainActor
+final class Surveyor: ObservableObject {
+
+    @Published var navigateToWeb = false {
+        didSet {
+            if navigateToWeb {
+                deadlineTask?.cancel()
+                uiLocked = true
+            }
+        }
+    }
+    
+    private func advance() {
+        guard !stile.sealed, !running else { return }
+        guard walker.pendingPush() != nil || walker.hasData else { return }
+        running = true
+        Task { [weak self] in
+            guard let self = self else { return }
+            let verdict = await self.walker.walk()
+            self.running = false
+            if let verdict = verdict { self.settle(verdict) }
+        }
+    }
+
+    private func settle(_ verdict: Verdict) {
+        guard stile.trySeal() else { return }
+        deadlineTask?.cancel()
+        switch verdict {
+        case .bearing(let url):
+            let ripe = walker.gauge.ripe
+            walker.moor(url)
+            if ripe {
+                if !showOfflineView {
+                    showPermissionPrompt = true
+                }
+            } else {
+                navigateToWeb = true
+            }
+        case .shuttered:
+            if let saved = walker.savedRoute() {
+                walker.pin(saved)
+                navigateToWeb = true
+            } else {
+                navigateToMain = true
+            }
+        }
+    }
+
+    @Published var showPermissionPrompt = false
+
+    private let walker: Walker
+    private let stile = Stile()
+    
+    func networkChanged(_ connected: Bool) {
+        if !connected { showOfflineView = true }
+    }
+
+    func acceptConsent() {
+        walker.ensurePaced()
+        consentTask = Task { [weak self] in
+            guard let self = self else { return }
+            let granted = await self.walker.chime.ring()
+            self.walker.commit(.consent(granted, Date()))
+            self.showPermissionPrompt = false
+            self.navigateToWeb = true
+        }
+    }
+    
+    private var uiLocked = false
+    
+    @Published var navigateToMain = false {
+        didSet {
+            if navigateToMain {
+                deadlineTask?.cancel()
+                uiLocked = true
+            }
+        }
+    }
+    private var running = false
+    private var deadlineTask: Task<Void, Never>?
+    @Published var showOfflineView = false
+
+    init(depot: Depot = Depot()) {
+        walker = Walker(depot: depot)
+    }
+
+    func ignite() {
+        walker.ensurePaced()
+        deadlineTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 30_000_000_000)
+            self?.settle(.shuttered)
+        }
+        advance()
+    }
+    
+    private var consentTask: Task<Void, Never>?
+
+    func absorbConversion(_ data: [String: String]) {
+        walker.ensurePaced()
+        walker.commit(.readings(data))
+        advance()
+    }
+
+    func absorbDeeplinks(_ data: [String: String]) {
+        walker.ensurePaced()
+        walker.commit(.strides(data))
+    }
+
+    func skipConsent() {
+        walker.ensurePaced()
+        walker.commit(.stamp(Date()))
+        showPermissionPrompt = false
+        navigateToWeb = true
+    }
+    
+}
+
 
 enum InsightsEngine {
     static func report(state: AppState, now: Date = Date()) -> InsightsReport {

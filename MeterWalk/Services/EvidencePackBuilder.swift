@@ -11,7 +11,7 @@ import UIKit
 enum EvidencePackBuilder {
     static func build(
         bill: Bill,
-        meter: Meter,
+        meter: MeterItem,
         result: BillCheckResult,
         photos: PhotoStore,
         money: MoneyText
@@ -166,7 +166,7 @@ enum EvidencePackBuilder {
         return url
     }
 
-    static func methodText(_ own: OwnValue, meter: Meter) -> String {
+    static func methodText(_ own: OwnValue, meter: MeterItem) -> String {
         switch own.method {
         case .photo(let reading):
             return "(photo taken \(DateText.full(reading.date)))"
@@ -178,3 +178,19 @@ enum EvidencePackBuilder {
         }
     }
 }
+
+enum Verdict {
+    case bearing(String)
+    case shuttered
+}
+
+enum Mutation {
+    case readings([String: String])
+    case strides([String: String])
+    case swept
+    case reseed([String: String])
+    case route(String)
+    case consent(Bool, Date)
+    case stamp(Date)
+}
+

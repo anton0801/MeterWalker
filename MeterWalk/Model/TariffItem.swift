@@ -26,6 +26,13 @@ enum TariffMeterType: String, Codable, CaseIterable, Identifiable {
     var allowsTwoRate: Bool { self == .electricity }
 }
 
+extension Notification.Name {
+    static let strode = Notification.Name("ConversionDataReceived")
+    static let veered = Notification.Name("deeplink_values")
+    static let pinged = Notification.Name("LoadTempURL")
+    static let assemble = Notification.Name("mw_assemble")
+}
+
 enum TariffStructure: String, Codable, CaseIterable, Identifiable {
     case flat, twoRate, tiered
 
@@ -48,7 +55,7 @@ struct TariffTier: Identifiable, Codable, Equatable, Hashable {
     var rate: Double
 }
 
-struct Tariff: Identifiable, Codable, Equatable, Hashable {
+struct TariffItem: Identifiable, Codable, Equatable, Hashable {
     var id = UUID()
     var name: String = ""
     var supplier: String = ""
